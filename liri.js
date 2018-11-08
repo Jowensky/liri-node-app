@@ -8,15 +8,34 @@ var spotify = new Spotify(pass.spotify);
 
 var request = require("request");
 
-artist = process.argv[2];
+lookUp = process.argv[2];
 
+function bandsintown(body) {
+  if (lookUp === "concert-this") {
+    console.log(JSON.parse(body));
+  } 
+}
+
+function omdb(body) {
+  if (lookUp === "movie-this") {
+    console.log("The movie's rating is: " + JSON.parse(body).imdbRating);
+  }
+}
+
+function spot(data) {
+  if (lookUp === "spotify-this-song") {
+    console.log(data.tracks.items[1].name);
+  } 
+}
+
+// make to search any artist
 request(
   "https://rest.bandsintown.com/artists/" +
-    artist +
+    "lucki" +
     "/events?app_id=codingbootcamp",
   function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      console.log(JSON.parse(body));
+      bandsintown(body);
     }
   }
 );
@@ -25,7 +44,7 @@ request(
   "http://www.omdbapi.com/?t=remember+the+titans&y=&plot=short&apikey=trilogy",
   function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      console.log("The movie's rating is: " + JSON.parse(body).imdbRating);
+      omdb(body);
     }
   }
 );
@@ -37,5 +56,6 @@ spotify.search({ type: "track", query: "All the Small Things" }, function(
   if (err) {
     return console.log("Error occurred: " + err);
   }
-  console.log(data.tracks.items[1].name);
+  spot(data);
 });
+
